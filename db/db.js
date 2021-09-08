@@ -20,6 +20,4 @@ dummy.forEach(val=> {
     db.public.one(queryText)
 })
 
-console.log(db.public.one(`SELECT * FROM products WHERE id = 1 LIMIT 10`))
-
 module.exports = db

@@ -6,7 +6,7 @@ const db = newDb();
 
 try {
 const dbSchema = `
-    CREATE TABLE PRODUCTS (id numeric PRIMARY KEY, sku varchar, name varchar, price numeric, attribute json)
+    CREATE TABLE PRODUCTS (id SERIAL PRIMARY KEY, sku varchar, name varchar, price numeric, attribute json)
 `
 //Create table in pg-mem
 db.public.none(dbSchema);

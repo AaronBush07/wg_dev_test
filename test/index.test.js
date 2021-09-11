@@ -76,3 +76,31 @@ describe("Schema validation", () => {
     expect(result.error).toBeTruthy();
   });
 });
+
+describe("Ensure data is valid", () => {
+  it("Min price is valid", async () => {
+    const pricemin = 200;
+    const data = { pricemin };
+    const response = await request.get(`/products?${qs.stringify(data)}`);
+    const result = response.body.every((element) => element.price >= pricemin);
+    expect(result).toBeTruthy();
+  });
+
+  it("Max price is valid", async () => {
+    const pricemax = 500;
+    const data = { pricemax };
+    const response = await request.get(`/products?${qs.stringify(data)}`);
+    const result = response.body.every((element) => element.price <= pricemax);
+    expect(result).toBeTruthy();
+  });
+
+  it("Product is fantastic", async () => {
+    const fantastic = true;
+    const data = { fantastic };
+    const response = await request.get(`/products?${qs.stringify(data)}`);
+    const result = response.body.every((element) => element.attribute.fantastic.value === true);
+    expect(result).toBeTruthy();
+  });
+
+
+});

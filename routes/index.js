@@ -1,4 +1,5 @@
 const express = require("express");
+const { errors } = require("pg-promise");
 const router = express.Router();
 const db = require("../db");
 const whereParser = require("../db/whereParser");
@@ -17,9 +18,10 @@ router.use("/products", async function (req, res, next) {
 router.get("/products", function (req, res, next) {
   //const {pricemin, pricemax, fantastic, rating} = req.query
   try {
-    console.log(whereParser(req.query));
-    console.log('woww')
-    res.status(200).send(db.public.many(`SELECT * FROM PRODUCTS`));
+    const where = whereParser(req.query);
+    let query = `SELECT * FROM PRODUCTS ${where? 'WHERE '+ where: ''}`
+    console.log(query)
+    res.status(200).send(db.public.many(query));
   } catch (e) {
     console.log(e);
     throw Error(e);
@@ -29,7 +31,7 @@ router.get("/products", function (req, res, next) {
 router.get("/test", function (req, res, next) {
   res.send(
     db.public.many(
-      `SELECT * FROM PRODUCTS p WHERE p.attribute -> 'fantastic' -> 'value' = 'false'`
+      `SELECT * FROM PRODUCTS p WHERE p.attribute -> 'fantastic' -> 'value' = '${String(false)}'`
     )
   );
 });

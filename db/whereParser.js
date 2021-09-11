@@ -17,7 +17,7 @@ module.exports = function (params) {
     if (and > 0) {
       where += " AND ";
     }
-    where += ` attribute->'fantastic'->'value'=${fantastic} `;
+    where += ` attribute->'fantastic'->'value'='${fantastic}' `;
     and++;
   }
   if (rating) {

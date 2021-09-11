@@ -4,8 +4,8 @@ const router = express.Router();
 const db = require("../db");
 const whereParser = require("../db/whereParser");
 const validate = require("../validation/schema");
-/**Get all products */
 
+/**Validaton middleware  */
 router.use("/products", async function (req, res, next) {
   const result = await validate(req.query);
   if (result.error) {
@@ -15,6 +15,9 @@ router.use("/products", async function (req, res, next) {
   }
 });
 
+/**Get all products. 
+ * /products?pricemin=9&pricemax=10&fantastic=true&ratingmin=2.0&ratingmax=5
+*/
 router.get("/products", function (req, res) {
   try {
     const where = whereParser(req.query);

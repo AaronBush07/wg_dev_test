@@ -1,5 +1,8 @@
 const Joi = require('joi')
 
+/**All requests to products are validated here according to the below ruleset. 
+ * Unknown keys are not allowed. All keys are currently optional. 
+ */
 const schema = Joi.object().keys({
     pricemin: Joi.number().positive(),
     pricemax: Joi.number().when('pricemin', {

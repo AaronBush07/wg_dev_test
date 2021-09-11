@@ -14,6 +14,7 @@ try {
   console.log(e);
 }
 
+/**Populate fake database */
 dummy.forEach(async (val) => {
   const queryText = pgp.as.format(
     `INSERT INTO PRODUCTS(id, sku, name, price, attribute) VALUES ($1, $2, $3, $4, $5)`,

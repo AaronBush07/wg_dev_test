@@ -4,7 +4,6 @@
 2. Using the language / framework of your choice to write a simple rest service that returns the same JSON formatted results as the mock data with the following capabilities: 
 - Connects to the database to retrieve results. 
 - Can filter the product set based on price, min / max 
-- gget /product?price=10.88
 - Can filter the product set based on the fantastic attribute 
 - Can filter the product set based on the rating attribute min / max 3. 
 

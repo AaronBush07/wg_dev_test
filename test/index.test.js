@@ -31,6 +31,27 @@ describe("Schema validation", ()=> {
     expect(result.error).toBe(undefined)
   })
 
+  it("Pricemin must be less than pricemax", async ()=> {
+    const data = {
+      pricemin: 400,
+      pricemax: 200,
+      fantastic: true,
+      rating: 3
+    }
+    const result = await validate(data)
+    expect(result.error).toBeTruthy();
+  })
+
+  it("Not all fields compulsory", async ()=> {
+    const data = {
+      pricemax: 200,
+      rating: 3
+    }
+    const result = await validate(data);
+    console.log(result)
+    expect(result.error).toBe(undefined);
+  })
+
   it("Bad schema", async ()=> {
     const data = {
       pricemin: 'aaaa',

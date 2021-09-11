@@ -6,15 +6,20 @@ const validate = require('../validation/schema')
 /**Get all products */
 
 
-router.use('/products', function(req,res,next) {
-  validate(req.params)
-
+router.use('/products', async function(req,res,next) {
+  console.log(req.query)
+  const result = await validate(req.query)
+  console.log(result)
+  if (result.error) {
+    res.status(400).send(result.error);
+  }
+  else {
+    next()
+  }
 });
 
 router.get('/products', function(req, res, next) {
-  const {pricemin, pricemax, fantastic, rating} = req.params
-
-
+  const {pricemin, pricemax, fantastic, rating} = req.query
   res.status(200).send(db.public.many(`SELECT * FROM PRODUCTS`))
 });
 

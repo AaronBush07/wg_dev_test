@@ -5,6 +5,7 @@ const request = supertest(app);
 const db = require("../db");
 const validate = require('../validation/schema');
 const backup = db.backup();
+const qs = require('qs')
 
 it("1 should equal 1", () => {
   expect(1).toBe(1);
@@ -15,6 +16,15 @@ describe("Endpoint responses", () => {
     const response = await request.get("/nonexistantapi");
     expect(response.status).toBe(404);
   });
+
+  it('Return 400', async() => {
+    const str = qs.stringify({
+      pricemin: 400, 
+      pricemax: 200
+    });
+    const response = await (request.get(`/products?${str}`))
+    expect(response.status).toBe(400)
+  })
 
 });
 

@@ -7,7 +7,11 @@ const schema = Joi.object().keys({
         then: Joi.number().greater(Joi.ref('pricemin'))
     }).positive(),
     fantastic: Joi.bool(),
-    rating: Joi.number().positive(),
+    ratingmin: Joi.number().positive(),
+    ratingmax: Joi.number().when('ratingmin', {
+        is: Joi.exist(), 
+        then: Joi.number().greater(Joi.ref('ratingmin'))
+    }).positive(),
     limit: Joi.number().positive(),
     offset: Joi.number().positive()
 })

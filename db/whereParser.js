@@ -1,5 +1,5 @@
 module.exports = function (params) {
-  const { pricemin, pricemax, fantastic, rating } = params;
+  const { pricemin, pricemax, fantastic, ratingmin, ratingmax } = params;
   let where = ``;
   let and = 0;
   if (pricemin) {
@@ -20,11 +20,19 @@ module.exports = function (params) {
     where += ` attribute->'fantastic'->'value'='${fantastic}' `;
     and++;
   }
-  if (rating) {
+  if (ratingmin) {
     if (and > 0) {
       where += " AND ";
     }
-    where += `attribute->'rating'->'value'=${rating} `;
+    where += `attribute->'rating'->'value'::float>=${ratingmin} `;
+    and++
+  }
+  if (ratingmax) {
+    if (and > 0) {
+      where += " AND ";
+    }
+    where += `attribute->'rating'->'value'::float<=${ratingmax} `;
+    and++
   }
   return where
 };

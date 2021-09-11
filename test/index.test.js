@@ -5,6 +5,7 @@ const request = supertest(app);
 const db = require("../db");
 const validate = require("../validation/schema");
 const backup = db.backup();
+const dummyData = require('../db/dummyData.json')
 const qs = require("qs");
 
 it("1 should equal 1", () => {
@@ -38,7 +39,8 @@ describe("Schema validation", () => {
       pricemin: 100,
       pricemax: 200,
       fantastic: true,
-      rating: 3,
+      ratingmin: 3,
+      ratingmax: 5,
     };
     const result = await validate(data);
     expect(result.error).toBe(undefined);
@@ -49,7 +51,7 @@ describe("Schema validation", () => {
       pricemin: 400,
       pricemax: 200,
       fantastic: true,
-      rating: 3,
+      ratingmin: 3,
     };
     const result = await validate(data);
     expect(result.error).toBeTruthy();
@@ -58,19 +60,42 @@ describe("Schema validation", () => {
   it("Not all fields compulsory. Price max should still work without price min", async () => {
     const data = {
       pricemax: 200,
-      rating: 3,
+      ratingmin: 3,
     };
     const result = await validate(data);
     console.log(result);
     expect(result.error).toBe(undefined);
   });
 
-  it("Bad schema", async () => {
+  it("Bad schema should return error", async () => {
     const data = {
       pricemin: "aaaa",
       pricemax: "bbb",
       fantastic: true,
-      rating: 3,
+      ratingmax: 3,
+    };
+    const result = await validate(data);
+    expect(result.error).toBeTruthy();
+  });
+
+  it("Bad schema should return error #2", async () => {
+    const data = {
+      pricemin: "200",
+      pricemax: "400",
+      fantastic: true,
+      ratingmax: 3,
+    };
+    const result = await validate(data);
+    expect(result.error).toBeTruthy();
+  });
+
+  it("Bad schema should return error #3", async () => {
+    const data = {
+      pricemin: 200,
+      pricemax: 400,
+      fantastic: true,
+      ratingmax: 3,
+      ratingmin: 5,
     };
     const result = await validate(data);
     expect(result.error).toBeTruthy();
@@ -98,9 +123,108 @@ describe("Ensure data is valid", () => {
     const fantastic = true;
     const data = { fantastic };
     const response = await request.get(`/products?${qs.stringify(data)}`);
-    const result = response.body.every((element) => element.attribute.fantastic.value === true);
+    const result = response.body.every(
+      (element) => element.attribute.fantastic.value === fantastic
+    );
+    expect(result).toBeTruthy();
+  });
+
+  it("Product is not fantastic", async () => {
+    const fantastic = false;
+    const data = { fantastic };
+    const response = await request.get(`/products?${qs.stringify(data)}`);
+    const result = response.body.every(
+      (element) => element.attribute.fantastic.value === fantastic
+    );
+    expect(result).toBeTruthy();
+  });
+
+  it("Rating is equal or greater than 4", async () => {
+    const ratingmin = 4;
+    const data = { ratingmin };
+    const response = await request.get(`/products?${qs.stringify(data)}`);
+    const result = response.body.every(
+      (element) => element.attribute.rating.value >= ratingmin
+    );
+    expect(result).toBeTruthy();
+  });
+
+  it("Rating is equal or less than 4", async () => {
+    const ratingmax = 4;
+    const data = { ratingmax };
+    const response = await request.get(`/products?${qs.stringify(data)}`);
+    const result = response.body.every(
+      (element) => element.attribute.rating.value <= ratingmax
+    );
+    expect(result).toBeTruthy();
+  });
+
+  it("Price is between 500 and 900. Rating is between 2 and 4. Is fantastic", async () => {
+    const ratingmin = 2.0,
+      ratingmax = 4,
+      pricemin = 500,
+      pricemax = 900,
+      fantastic = true;
+
+    const data = {
+      ratingmin,
+      ratingmax,
+      pricemin,
+      pricemax,
+      fantastic,
+    };
+
+    const response = await request.get(`/products?${qs.stringify(data)}`);
+    const result = response.body.every((element) => {
+      return (
+        element.price >= pricemin &&
+        element.price <= pricemax &&
+        element.attribute.rating.value <= ratingmax &&
+        element.attribute.rating.value >= ratingmin &&
+        element.attribute.fantastic.value === fantastic
+      );
+    });
     expect(result).toBeTruthy();
   });
 
 
+  it("Price is between 200 and 450. Rating is between 2 and 4. Is not fantastic. Matches original mock data", async () => {
+    const ratingmin = 2.0,
+      ratingmax = 4,
+      pricemin = 200,
+      pricemax = 450,
+      fantastic = false;
+
+    const data = {
+      ratingmin,
+      ratingmax,
+      pricemin,
+      pricemax,
+      fantastic,
+    };
+
+    const response = await request.get(`/products?${qs.stringify(data)}`);
+    const result = response.body.every((element) => {
+      return (
+        element.price >= pricemin &&
+        element.price <= pricemax &&
+        element.attribute.rating.value <= ratingmax &&
+        element.attribute.rating.value >= ratingmin &&
+        element.attribute.fantastic.value === fantastic
+      );
+    });
+    expect(result).toBeTruthy();
+
+    const dummy = dummyData.filter(element=> {
+      return (
+        element.price >= pricemin &&
+        element.price <= pricemax &&
+        element.attribute.rating.value <= ratingmax &&
+        element.attribute.rating.value >= ratingmin &&
+        element.attribute.fantastic.value === fantastic
+      );
+    })
+
+    expect(response.body.length).toBe(dummy.length)
+  });
 });

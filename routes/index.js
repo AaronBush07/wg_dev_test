@@ -15,8 +15,7 @@ router.use("/products", async function (req, res, next) {
   }
 });
 
-router.get("/products", function (req, res, next) {
-  //const {pricemin, pricemax, fantastic, rating} = req.query
+router.get("/products", function (req, res) {
   try {
     const where = whereParser(req.query);
     let query = `SELECT * FROM PRODUCTS ${where? 'WHERE '+ where: ''}`
@@ -31,7 +30,7 @@ router.get("/products", function (req, res, next) {
 router.get("/test", function (req, res, next) {
   res.send(
     db.public.many(
-      `SELECT * FROM PRODUCTS p WHERE p.attribute -> 'fantastic' -> 'value' = '${String(false)}'`
+      `SELECT * FROM PRODUCTS p WHERE p.attribute -> 'rating' -> 'value'::float >= 4.0`
     )
   );
 });

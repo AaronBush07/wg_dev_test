@@ -55,7 +55,7 @@ describe("Schema validation", () => {
     expect(result.error).toBeTruthy();
   });
 
-  it("Not all fields compulsory", async () => {
+  it("Not all fields compulsory. Price max should still work without price min", async () => {
     const data = {
       pricemax: 200,
       rating: 3,

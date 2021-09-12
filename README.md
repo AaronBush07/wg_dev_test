@@ -24,3 +24,7 @@ or
 Instead of a real database, a mock database using pg-mem has been used. It behaves almost the same as a real postgres database just in memory. 
 
 Server side validation has been done via the Joi library. It should be self-explanatory as to how it works based on the schema.js file found in the validation folder. 
+
+For the design of the api, I've gone for using pricemin, pricemax etc. I've interpreted the ratings to be the same. 
+
+Pagination is a bonus. 

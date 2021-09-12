@@ -57,6 +57,29 @@ describe("Schema validation", () => {
     expect(result.error).toBeTruthy();
   });
 
+  it("Equal prices are allowed", async () => {
+    const data = {
+      pricemin: 200,
+      pricemax: 200,
+      fantastic: true,
+      ratingmin: 3,
+    };
+    const result = await validate(data);
+    expect(result.error).toBe(undefined);
+  });
+
+  it("Equal ratings are allowed", async () => {
+    const data = {
+      pricemin: 200,
+      pricemax: 400,
+      fantastic: true,
+      ratingmin: 3,
+      ratingmax: 3,
+    };
+    const result = await validate(data);
+    expect(result.error).toBe(undefined);
+  });
+
   it("Not all fields compulsory. Price max should still work without price min", async () => {
     const data = {
       pricemax: 200,
@@ -82,10 +105,11 @@ describe("Schema validation", () => {
     const data = {
       pricemin: "200",
       pricemax: "400",
-      fantastic: true,
-      ratingmax: 3,
+      fantastic: 1,
+      ratingmax: "3",
     };
     const result = await validate(data);
+    console.log(result)
     expect(result.error).toBeTruthy();
   });
 
@@ -189,6 +213,7 @@ describe("Ensure data is valid", () => {
 
 
   it("Price is between 200 and 450. Rating is between 2 and 4. Is not fantastic. Matches original mock data", async () => {
+    expect.assertions(3);
     const ratingmin = 2.0,
       ratingmax = 4,
       pricemin = 200,
@@ -225,6 +250,7 @@ describe("Ensure data is valid", () => {
       );
     })
 
-    expect(response.body.length).toBe(dummy.length)
+    expect(response.body.length).toBe(dummy.length);
+    expect(response.status).toBe(200)
   });
 });
